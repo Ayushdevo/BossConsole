@@ -24,6 +24,7 @@ internal object BrowserProfilePaths {
     private const val PROFILE_PREFIX = "$DEFAULT_PROFILE_ID-"
     private const val MAX_PROFILE_ID_LENGTH = 96
     private val validProfileId = Regex("browser-profile(?:-[a-z0-9]+(?:[-_][a-z0-9]+)*)?")
+    private val temporaryProfileId = Regex("browser-profile-[0-9]+")
     private val unsafeDisplayCharacters = Regex("[^a-z0-9]+")
 
     data class Selection(
@@ -47,6 +48,10 @@ internal object BrowserProfilePaths {
 
     fun isValidId(profileId: String): Boolean =
         profileId.length <= MAX_PROFILE_ID_LENGTH && validProfileId.matches(profileId)
+
+    /** Engine fallbacks use an epoch suffix; named profiles must survive temporary-profile cleanup. */
+    fun isTemporaryId(profileId: String): Boolean =
+        isValidId(profileId) && temporaryProfileId.matches(profileId)
 
     /** Filters persisted values and guarantees a usable current/default profile. */
     fun normalizeSelection(

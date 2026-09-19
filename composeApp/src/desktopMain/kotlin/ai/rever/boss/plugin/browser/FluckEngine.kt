@@ -1778,7 +1778,7 @@ object FluckEngine {
 
     /**
      * Clean up old temporary profiles to prevent disk space accumulation.
-     * Deletes browser-profile-* directories older than 24 hours.
+     * Deletes browser-profile-<timestamp> directories older than 24 hours.
      * Called during engine initialization (may run alongside active engine).
      */
     private fun cleanupOldTemporaryProfiles() {
@@ -1790,8 +1790,7 @@ object FluckEngine {
                 .listFiles()
                 ?.filter {
                     it.isDirectory &&
-                        BrowserProfilePaths.isValidId(it.name) &&
-                        it.name != BrowserProfilePaths.DEFAULT_PROFILE_ID &&
+                        BrowserProfilePaths.isTemporaryId(it.name) &&
                         it.lastModified() < oneDayAgo
                 }?.forEach { dir ->
                     BrowserProfilePaths.delete(dir.name)
@@ -1816,8 +1815,7 @@ object FluckEngine {
                 .listFiles()
                 ?.filter {
                     it.isDirectory &&
-                        BrowserProfilePaths.isValidId(it.name) &&
-                        it.name != BrowserProfilePaths.DEFAULT_PROFILE_ID
+                        BrowserProfilePaths.isTemporaryId(it.name)
                 }?.forEach { dir ->
                     if (BrowserProfilePaths.delete(dir.name)) {
                         cleanedCount++

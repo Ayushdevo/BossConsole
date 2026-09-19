@@ -54,6 +54,15 @@ class BrowserProfilePathsTest {
     }
 
     @Test
+    fun `temporary profile detection excludes named profiles`() {
+        assertTrue(BrowserProfilePaths.isTemporaryId("browser-profile-1723456789"))
+        assertFalse(BrowserProfilePaths.isTemporaryId("browser-profile"))
+        assertFalse(BrowserProfilePaths.isTemporaryId("browser-profile-work"))
+        assertFalse(BrowserProfilePaths.isTemporaryId("browser-profile-work-2"))
+        assertFalse(BrowserProfilePaths.isTemporaryId("browser-profile-${"1".repeat(100)}"))
+    }
+
+    @Test
     fun `resolution stays one component beneath the supplied root`() {
         val resolved = BrowserProfilePaths.resolve("browser-profile-work", root)
         assertEquals(root.toAbsolutePath().normalize(), resolved.parent)
