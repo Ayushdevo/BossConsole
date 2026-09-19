@@ -796,13 +796,14 @@ class DefaultPlugin(
     }
 
     // Split view operations for plugins that need tab/panel operations
-    override val splitViewOperations: SplitViewOperations? by lazy {
+    private val splitViewOperationsDelegate = lazy {
         if (splitViewState != null && _windowId != null) {
             SplitViewOperationsImpl(splitViewState, _windowId)
         } else {
             null
         }
     }
+    override val splitViewOperations: SplitViewOperations? by splitViewOperationsDelegate
 
     // Active tabs provider for topofmind plugin
     override val activeTabsProvider: ActiveTabsProvider? by lazy {
@@ -1240,6 +1241,9 @@ class DefaultPlugin(
         }
         if (fileSystemDataProviderDelegate.isInitialized()) {
             (fileSystemDataProvider as? DisposableProvider)?.dispose()
+        }
+        if (splitViewOperationsDelegate.isInitialized()) {
+            (splitViewOperations as? DisposableProvider)?.dispose()
         }
         pluginScope.cancel()
     }
