@@ -185,7 +185,7 @@ object FaviconCache {
      */
     fun cleanupStaleEntries(daysOld: Int = 30) {
         try {
-            val cutoffTime = System.currentTimeMillis() - (daysOld * 24 * 60 * 60 * 1000L)
+            val cutoffTime = staleCutoffMillis(System.currentTimeMillis(), daysOld)
             var removedCount = 0
 
             cacheDir.listFiles()?.forEach { file ->
@@ -209,3 +209,8 @@ object FaviconCache {
      */
     fun getCacheCount(): Int = cacheDir.listFiles()?.size ?: 0
 }
+
+internal fun staleCutoffMillis(
+    now: Long,
+    daysOld: Int,
+): Long = now - (daysOld * 86_400_000L)
